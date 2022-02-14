@@ -1,0 +1,24 @@
+[submodule "src/KLib/Delphi_FormUtils_Library"]
+	path = src/KLib/Delphi_FormUtils_Library
+	url = https://github.com/karoloortiz/Delphi_FormUtils_Library.git
+[submodule "src/KLib/Delphi_Utils_Library"]
+	path = src/KLib/Delphi_Utils_Library
+	url = https://github.com/karoloortiz/Delphi_Utils_Library.git
+[submodule "src/KLib/Delphi_Async_Library"]
+	path = src/KLib/Delphi_Async_Library
+	url = https://github.com/karoloortiz/Delphi_Async_Library.git
+[submodule "src/KLib/Delphi_MySQL_Library"]
+	path = src/KLib/Delphi_MySQL_Library
+	url = https://github.com/karoloortiz/Delphi_MySQL_Library.git
+[submodule "src/GO-STANDARD"]
+	path = src/GO-STANDARD
+	url = https://github.com/sandrocarrara/GO-STANDARD.git
+[submodule "KLib/Delphi_Utils_Library"]
+	path = KLib/Delphi_Utils_Library
+	url = https://github.com/karoloortiz/Delphi_Utils_Library.git
+[submodule "src/KLib/Delphi_SQLServer_Library"]
+	path = src/KLib/Delphi_SQLServer_Library
+	url = https://github.com/karoloortiz/Delphi_SQLServer_Library.git
+[submodule "src/KLib/GO_Library"]
+	path = src/KLib/GO_Library
+	url = https://github.com/karoloortiz/GO_Library.git

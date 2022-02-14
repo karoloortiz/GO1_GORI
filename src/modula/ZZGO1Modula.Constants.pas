@@ -1,0 +1,124 @@
+unit ZZGO1Modula.Constants;
+
+interface
+
+uses
+  ZZKLib.Constants,
+  ZZCALLPRG;
+
+const
+  MODULA_MISSIONE_PROGRESSIVO = 'MODULA_MISSIONE_PROGRESSIVO';
+
+  FIELD_DATA_ULTIMO_AGGIORNAMENTO_ART = 'DATA_ULTIMO_AGGIORNAMENTO_ART';
+  FIELD_DESCRIZIONE_MODULA = 'DESCRIZIONE_MODULA';
+  FIELD_MODULA = GO_PERS_CODICE + '_MODULA';
+  FIELD_BAIA_ORDINI_VENDITA = 'baia_ordini_vendita';
+  FIELD_BAIA_ORDINI_ACQUISTO = 'baia_ordini_acquisto';
+  FIELD_BAIA_VENDITA_BANCO = 'baia_vendita_banco';
+
+  PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART = ':' + FIELD_DATA_ULTIMO_AGGIORNAMENTO_ART;
+
+  TABLENAME_ARF_MODULA = 'ARF_MODULA';
+  TABLENAME_ESPMODULA = GO_PERS_CODICE + 'ESPMODULA';
+
+  SELECT_FROM_ART_WHERE_PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART =
+    'SELECT' + slinebreak +
+    'ART.CODICE,' + slinebreak +
+    'CONCAT(ART.DESCRIZIONE1, " ", ART.DESCRIZIONE2) DESCRIZIONE_MODULA' + slinebreak +
+    'FROM' + slinebreak +
+    'ART' + slinebreak +
+    'INNER JOIN TUB ON TUB.CODICE = ART.TUB_CODICE AND TUB.GO1_MODULA = "si"' + slinebreak +
+    'WHERE' + slinebreak +
+    'OBSOLETO = "no"' + slinebreak +
+    'AND ((ART.DATA_ORA_CREAZIONE > ' + PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART + ') OR (ART.DATA_ORA > ' + PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART + '))' + slinebreak +
+    'ORDER BY' + slinebreak +
+    'ART.CODICE';
+
+  SELECT_DATA_ULTIMO_AGGIORNAMENTO_ART =
+    'SELECT' + sLineBreak +
+    FIELD_DATA_ULTIMO_AGGIORNAMENTO_ART + sLineBreak +
+    'FROM' + sLineBreak +
+    TABLENAME_ESPMODULA + sLineBreak +
+    'WHERE' + sLineBreak +
+    FIELD_ID + ' = 1';
+
+  UPDATE_DATA_ULTIMO_AGGIORNAMENTO_ART_WHERE_PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART =
+    'INSERT INTO ' + TABLENAME_ESPMODULA + sLineBreak +
+    '(' + sLineBreak +
+    FIELD_ID + ',' + sLineBreak +
+    FIELD_DATA_ULTIMO_AGGIORNAMENTO_ART + sLineBreak +
+    ')' + sLineBreak +
+    'VALUES' + sLineBreak +
+    '(' + sLineBreak +
+    '1,' + sLineBreak +
+    PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART + sLineBreak +
+    ')' + sLineBreak +
+    'ON DUPLICATE KEY UPDATE' + sLineBreak +
+    FIELD_DATA_ULTIMO_AGGIORNAMENTO_ART + ' = ' + PARAM_DATA_ULTIMO_AGGIORNAMENTO_ART;
+
+  UPDATE_DATA_ULTIMO_AGGIORNAMENTO_GIACENZE_WHERE_PARAM_DATA_ULTIMO_AGGIORNAMENTO_GIACENZE =
+    'INSERT INTO ' + TABLENAME_ESPMODULA + sLineBreak +
+    '(' + sLineBreak +
+    'ID,' + sLineBreak +
+    'DATA_ULTIMO_AGGIORNAMENTO_GIACENZE' + sLineBreak +
+    ')' + sLineBreak +
+    'VALUES' + sLineBreak +
+    '(' + sLineBreak +
+    '1,' + sLineBreak +
+    ':DATA_ULTIMO_AGGIORNAMENTO_GIACENZE' + sLineBreak +
+    ')' + sLineBreak +
+    'ON DUPLICATE KEY UPDATE' + sLineBreak +
+    'DATA_ULTIMO_AGGIORNAMENTO_GIACENZE = :DATA_ULTIMO_AGGIORNAMENTO_GIACENZE';
+
+  //-----------------------------------------------------------------------------
+  TABLENAME_MODULA_INVIO = GO_PERS_CODICE + '_MODULA_INVIO';
+
+  SELECT_MISSIONE_FROM_TABLE_WHERE_PARAM_PROGRESSIVO_PARAM_TABLE_T_PARAM_TABLE_R_PARAM_VALUE =
+    'SELECT' + sLineBreak +
+    PARAM_TABLE_R + '.' + FIELD_PROGRESSIVO + ',' +
+    PARAM_TABLE_R + '.' + FIELD_RIGA + ',' + sLineBreak +
+    PARAM_TABLE_R + '.' + FIELD_ART_CODICE + ',' + sLineBreak +
+    '(' + PARAM_TABLE_R + '.' + FIELD_QUANTITA + ' - ' + 'IF(' + TABLENAME_MODULA_INVIO + '.' + FIELD_QUANTITA_INVIATA + ' IS NOT NULL, ' + TABLENAME_MODULA_INVIO + '.' + FIELD_QUANTITA_INVIATA + ', 0)' + ') ' + FIELD_QUANTITA + sLineBreak +
+    'FROM' + sLineBreak +
+    PARAM_TABLE_R + sLineBreak +
+    'INNER JOIN ' + PARAM_TABLE_T + ' ON ' + PARAM_TABLE_T + '.' + FIELD_PROGRESSIVO + ' = ' + PARAM_TABLE_R + '.' + FIELD_PROGRESSIVO + sLineBreak +
+    'INNER JOIN ' + TABLENAME_ART + ' ON ' + TABLENAME_ART + '.' + FIELD_CODICE + ' = ' + PARAM_TABLE_R + '.' + FIELD_ART_CODICE + sLineBreak +
+    'INNER JOIN ' + TABLENAME_TUB + ' ON ' + TABLENAME_TUB + '.' + FIELD_CODICE + ' = ' + TABLENAME_ART + '.' + FIELD_TUB_CODICE + ' AND ' + TABLENAME_TUB + '.' + FIELD_MODULA + ' = "' + VALUE_SI + '"' + sLineBreak +
+    'LEFT JOIN ' + TABLENAME_MODULA_INVIO + ' ON ' + TABLENAME_MODULA_INVIO + '.' + FIELD_TABELLA + ' = "' + PARAM_TABLE_R + '"' +
+    ' AND ' + TABLENAME_MODULA_INVIO + '.' + FIELD_PROGRESSIVO + ' = ' + PARAM_TABLE_R + '.' + FIELD_PROGRESSIVO +
+    ' AND ' + TABLENAME_MODULA_INVIO + '.' + FIELD_RIGA + ' = ' + PARAM_TABLE_R + '.' + FIELD_RIGA + sLineBreak +
+    'WHERE' + sLineBreak +
+    PARAM_TABLE_R + '.' + FIELD_PROGRESSIVO + ' = ' + PARAM_PROGRESSIVO + sLineBreak +
+    ' AND (' + TABLENAME_MODULA_INVIO + '.' + FIELD_QUANTITA_INVIATA + ' < ' + PARAM_TABLE_R + '.' + FIELD_QUANTITA +
+    ' OR ' + TABLENAME_MODULA_INVIO + '.' + FIELD_QUANTITA_INVIATA + ' IS NULL)';
+
+  //----------------------------------------------------------------------------
+  SELECT_FROM_MAG_WHERE_PARAM_TMA_CODICE_PARAM_DATA_INIZIO_PARAM_DATA_FINE_PARAM_ESE_CODICE =
+    'SELECT ' + sLineBreak +
+    TABLENAME_MMR + '.' + FIELD_ART_CODICE + ',' + sLineBreak +
+    TABLENAME_ARF + '.' + FIELD_CODICE_ARTICOLO_FORNITORE + ',' + sLineBreak +
+    TABLENAME_ART + '.' + FIELD_DESCRIZIONE1 + ',' + sLineBreak +
+    TABLENAME_ART + '.' + FIELD_TUB_CODICE + ',' + sLineBreak +
+    TABLENAME_MAG + '.' + FIELD_SCORTA_MINIMA + ',' + sLineBreak +
+    'SUM(' + TABLENAME_MMR + '.' + FIELD_QUANTITA + ') ' + FIELD_QUANTITA + ',' + sLineBreak +
+    TABLENAME_MAG + '.' + FIELD_ORDINATO + ',' + sLineBreak +
+    TABLENAME_MAG + '.' + FIELD_ESISTENZA + sLineBreak +
+    'FROM' + sLineBreak +
+    TABLENAME_MMR + sLineBreak +
+    'INNER JOIN ' + TABLENAME_MMT + ' ON ' + TABLENAME_MMT + '.' + FIELD_PROGRESSIVO + '=' + TABLENAME_MMR + '.' + FIELD_PROGRESSIVO +
+    ' AND ' + TABLENAME_MMT + '.' + FIELD_TMO_CODICE + ' IN ("SVMC", "SCMC", "STST", "STF1", "SVM")' + sLineBreak +
+    ' AND ' + TABLENAME_MMR + '.' + FIELD_TMA_CODICE + ' = ' + PARAM_TMA_CODICE + sLineBreak +
+    'INNER JOIN ' + TABLENAME_MAGESE + ' ON ' + TABLENAME_MAGESE + '.' + FIELD_ART_CODICE + ' = ' + TABLENAME_MMR + '.' + FIELD_ART_CODICE +
+    ' AND ' + TABLENAME_MAGESE + '.' + FIELD_TMA_CODICE + ' = ' + PARAM_TMA_CODICE + ' AND ' + TABLENAME_MAGESE + '.' + FIELD_ESE_CODICE + ' = ' + PARAM_ESE_CODICE + sLineBreak +
+    'INNER JOIN ' + TABLENAME_MAG + ' ON ' + TABLENAME_MAG + '.' + FIELD_ART_CODICE + ' = ' + TABLENAME_MMR + '.' + FIELD_ART_CODICE + ' AND ' + TABLENAME_MAG + '.' + FIELD_TMA_CODICE + ' = ' + PARAM_TMA_CODICE + sLineBreak +
+    'INNER JOIN ' + TABLENAME_ART + ' ON ' + TABLENAME_ART + '.' + FIELD_CODICE + ' = ' + TABLENAME_MMR + '.' + FIELD_ART_CODICE + sLineBreak +
+    'INNER JOIN ' + TABLENAME_TUB + ' ON ' + TABLENAME_TUB + '.' + FIELD_CODICE + ' = ' + TABLENAME_ART + '.' + FIELD_TUB_CODICE + ' AND ' + TABLENAME_TUB + '.' + FIELD_MODULA + ' = "' + VALUE_SI + '"' + sLineBreak +
+    'LEFT JOIN ' + TABLENAME_ARF + ' ON ' + TABLENAME_ARF + '.' + FIELD_ART_CODICE + ' = ' + TABLENAME_ART + '.' + FIELD_CODICE + ' AND ' + TABLENAME_ARF + '.' + FIELD_FRN_CODICE + ' = ' + TABLENAME_ART + '.' + FIELD_FRN_CODICE + sLineBreak +
+    'WHERE' + sLineBreak +
+    TABLENAME_MMT + '.' + FIELD_DATA_REGISTRAZIONE + ' BETWEEN ' + PARAM_DATA_INIZIO + ' AND ' + PARAM_DATA_FINE + sLineBreak +
+    'GROUP BY' + sLineBreak +
+    TABLENAME_MMR + '.' + FIELD_ART_CODICE;
+
+implementation
+
+end.

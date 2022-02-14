@@ -1,0 +1,7 @@
+#ARTICOLI
+
+<utente>_SCHED</utente><password>GO</password><salta_login>si</salta_login><programma>GO1ESPMODULA</programma><schedulato>si</schedulato><personalizzato>articoli</personalizzato>
+
+#GIACENZE
+
+<utente>_SCHED</utente><password>GO</password><salta_login>si</salta_login><programma>GO1ESPMODULA</programma><schedulato>si</schedulato><personalizzato>giacenze</personalizzato>

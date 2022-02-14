@@ -1,0 +1,5 @@
+analisi/kar.PLATINUMDATA.CENTRO_BATTERIE.analisi.2021.09.14.all1.odt filter=lfs diff=lfs merge=lfs -text
+src/assets.res filter=lfs diff=lfs merge=lfs -text
+bmp/go.jpeg filter=lfs diff=lfs merge=lfs -text
+bmp/go.jpg filter=lfs diff=lfs merge=lfs -text
+bmp/go_menu.jpg filter=lfs diff=lfs merge=lfs -text

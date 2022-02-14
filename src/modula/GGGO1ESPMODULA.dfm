@@ -1,0 +1,142 @@
+inherited GO1ESPMODULA: TGO1ESPMODULA
+  Caption = 'GO1ESPMODULA'
+  ClientHeight = 179
+  ClientWidth = 541
+  ExplicitWidth = 547
+  ExplicitHeight = 228
+  PixelsPerInch = 96
+  TextHeight = 13
+  object _data_ultimo_aggiornamento_art_lbl: TLabel [0]
+    Left = 9
+    Top = 43
+    Width = 157
+    Height = 13
+    Caption = 'data ultimo aggiornamento articoli'
+  end
+  object _data_ultimo_aggiornamento_giacenze_lbl: TLabel [1]
+    Left = 9
+    Top = 98
+    Width = 176
+    Height = 13
+    Caption = 'data ultimo aggiornamento giancenze'
+  end
+  inherited toolbar: TToolBar
+    Width = 541
+    ExplicitWidth = 541
+  end
+  inherited statusbar: TStatusBar
+    Top = 159
+    Width = 541
+    ExplicitTop = 97
+    ExplicitWidth = 541
+  end
+  object _tests_pnl: TPanel [4]
+    Left = 315
+    Top = 29
+    Width = 201
+    Height = 67
+    Caption = '_tests_pnl'
+    TabOrder = 2
+    object _test_btn: TRzRapidFireButton
+      Left = 1
+      Top = 1
+      Width = 191
+      Height = 26
+      Hint = 'esci dal programma'
+      Caption = '_test_btn'
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000000000000000000000000000000000000000000030000
+        000B000000110000000B00000002000000000000000000000000000000000000
+        00020000000A000000100000000C0000000300000000000000000000000A171D
+        50A529328BFF1419459500000010000000020000000000000000000000030000
+        0010362A2699685149FF4A3D38AD0000000B00000000000000000000000D2734
+        86F15DB8EAFF255EA0FF06082E9C0000001000000002000000030000000F2616
+        11A3A28B7FFFE8DAD0FF7B655DFD0000000E000000000000000000000007151D
+        468BB8DFF0FF64C4F1FF2B69ABFF060B339B0000001100000010281812A1987E
+        72FFE1CDC1FFB8A79EFF43383498000000080000000000000000000000010000
+        000B18245397BAE2F2FF6BC9F3FF2F6FB1FF070E389F221510B29A8175FFE2D1
+        C4FFBFAFA6FF4A3F399F0000000C000000020000000000000000000000000000
+        00010000000B18285797BCE4F3FF74CFF3FF3676B7FF2A2E57FF9E938CFFBFB0
+        A8FF4D413B9E0000000B00000002000000000000000000000000000000010000
+        000400000009000000151A2E5B9BBDE5F4FF7CD3F5FF3C7FBFFF313B68FF4037
+        32AE0000000B0000000200000002000000080000000C00000006000000062B25
+        225D6A5A52CC867168FF4D362DEA606E97FFBEE7F5FF85DAF7FF4284C3FF0D1C
+        49930000000800000000000000083D322A90796254FF231D195E2C2522589A86
+        7CFFD5CAC2FFEEE4DDFFE4D3C9FFDCCCC2FF6E81ABFFBDE7F5FF9FE0F6FF1F44
+        9CFA0102041A0000000D16120F418F7B6FFFF9F7F6FF9B806DFF7A6960D6A695
+        8BFF927C71FFAC9B91FFEFE6DFFFE4D6CCFF7D6A61EB1A355D893365B4EFE1D3
+        CDFF7F6859FF7F6759FF7E6759FF958175FFAF998AFF4E41388B9F8E84F94C43
+        407F0000000940363180A19086FFE8DBD2FF8D796FF90000000A0000000DB198
+        89FFE8DFD9FFE5DBD5FFF1ECE9FFA78E7DFF1915133600000006000000030000
+        000200000002060504147D685DFFDCD1CBFF7B6A62D40000000500000009B59D
+        8FFFEAE2DDFFF4EFECFFCABFB7FF4A3E37870000000500000000000000000000
+        000000000002382D287F89746CFFB1A098FF37322E58000000053A2F2887AD9E
+        95FFF6F3F0FFCCC0B9FF4C403986000000050000000100000000000000000000
+        000000000002AC9B92F9887A73C8312C2A4C000000053A2E2786B9AEA7FFFFFF
+        FFFFCEC2BBFF4E423A8400000004000000010000000000000000000000000000
+        000000000000000000010000000100000001C0A89CFFC0A89CFFC0A89CFFBFA7
+        9BFF4F433C820000000300000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000100000002000000020000
+        0002000000010000000000000000000000000000000000000000}
+    end
+  end
+  object exportArticoli_btn: TButton [5]
+    Left = 179
+    Top = 62
+    Width = 115
+    Height = 25
+    Caption = 'esporta articoli'
+    TabOrder = 3
+    OnClick = exportArticoli_btnClick
+  end
+  object _data_ultimo_aggiornamento_art_dateTime: TRzDBDateTimeEdit [6]
+    Left = 9
+    Top = 63
+    Width = 156
+    Height = 21
+    DataSource = tabella_ds
+    DataField = 'data_ultimo_aggiornamento_art'
+    ReadOnly = True
+    Color = clBtnFace
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Microsoft Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    ReadOnlyColor = clBtnFace
+    TabOrder = 4
+    EditType = etDate
+    Format = 'dd/mm/yyyy hh:nn:ss'
+  end
+  object _data_ultimo_aggiornamento_giacenze_dateTime: TRzDBDateTimeEdit [7]
+    Left = 9
+    Top = 118
+    Width = 156
+    Height = 21
+    DataSource = tabella_ds
+    DataField = 'data_ultimo_aggiornamento_giacenze'
+    ReadOnly = True
+    Color = clBtnFace
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Microsoft Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    ReadOnlyColor = clBtnFace
+    TabOrder = 5
+    EditType = etDate
+    Format = 'dd/mm/yyyy hh:nn:ss'
+  end
+  object importGiacenze_btn: TButton [8]
+    Left = 179
+    Top = 117
+    Width = 115
+    Height = 25
+    Caption = 'importa giacenze'
+    TabOrder = 6
+    OnClick = importGiacenze_btnClick
+  end
+end
