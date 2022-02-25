@@ -4939,6 +4939,12 @@
         <DCCReference Include="GO-STANDARD\GGIMPGEN.pas">
             <Form>IMPGEN</Form>
         </DCCReference>
+        <DCCReference Include="GO-STANDARD\GGCREATEST.pas">
+            <Form>CREATEST</Form>
+        </DCCReference>
+        <DCCReference Include="GO-STANDARD\GGFATPDFFE.pas">
+            <Form>FATPDFFE</Form>
+        </DCCReference>
         <DCCReference Include="KLib\Delphi_Utils_Library\KLib.Constants.pas"/>
         <DCCReference Include="KLib\Delphi_Utils_Library\KLib.Graphics.pas"/>
         <DCCReference Include="KLib\Delphi_Utils_Library\KLib.Math.pas"/>

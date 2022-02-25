@@ -226,9 +226,9 @@ begin
   begin
     _queryStmt := UPDATE_QUANTITA_INVIATA_WHERE_PARAM_TABLE_PARAM_QUANTITA_INVIATA_PARAM_PROGRESSIVO_PARAM_RIGA;
     _queryStmt.setParamAsDoubleQuotedString(PARAM_TABLE, tableName);
-    _queryStmt.setParamAsFloat(PARAM_QUANTITA_INVIATA, _rigaMissione.quantita, MYSQL_DECIMAL_SEPARATOR);
     _queryStmt.setParamAsFloat(PARAM_PROGRESSIVO, _rigaMissione.progressivo, MYSQL_DECIMAL_SEPARATOR);
     _queryStmt.setParamAsFloat(PARAM_RIGA, _rigaMissione.riga, MYSQL_DECIMAL_SEPARATOR);
+    _queryStmt.setParamAsFloat(PARAM_QUANTITA_INVIATA, _rigaMissione.quantita, MYSQL_DECIMAL_SEPARATOR);
     KLib.MySQL.Utils.executeQuery(_queryStmt, KLib.MySQL.DriverPort.TConnection(arc.arcdit));
 
     if tableName = 'OVR' then
@@ -240,7 +240,11 @@ begin
     end
     else if tableName = 'OAR' then
     begin
-      _queryStmt := 'UPDATE OAR SET go1_modula_quantita_da_inviare = 0 WHERE progressivo = :progressivo and riga = :riga';
+      _queryStmt :=
+        'UPDATE OAR SET' + sLineBreak +
+        'go1_modula_sospeso = "si",' + sLineBreak +
+        'go1_modula_quantita_da_inviare = 0' + sLineBreak +
+        'WHERE progressivo = :progressivo and riga = :riga';
       _queryStmt.setParamAsFloat(PARAM_PROGRESSIVO, _rigaMissione.progressivo, MYSQL_DECIMAL_SEPARATOR);
       _queryStmt.setParamAsFloat(PARAM_RIGA, _rigaMissione.riga, MYSQL_DECIMAL_SEPARATOR);
       KLib.MySQL.Utils.executeQuery(_queryStmt, KLib.MySQL.DriverPort.TConnection(arc.arcdit));

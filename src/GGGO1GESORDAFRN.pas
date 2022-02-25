@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GGKLib.GESORDAFRN, Data.DB, MyAccess,
   query_go, DBAccess, MemDS, Vcl.Menus, RzSpnEdt, Vcl.StdCtrls, Vcl.WinXCtrls,
   Vcl.Buttons, RzEdit, raizeedit_go, Vcl.Grids, Vcl.DBGrids, RzDBGrid, RzDBEdit,
-  Vcl.Mask, RzLabel, RzTabs, Vcl.ExtCtrls, RzPanel, Vcl.ComCtrls, Vcl.ToolWin;
+  Vcl.Mask, RzLabel, RzTabs, Vcl.ExtCtrls, RzPanel, Vcl.ComCtrls, Vcl.ToolWin,
+  RzCmboBx, RzDBCmbo;
 
 const
   PROGRAM_NAME = 'GO1GESORDAFRN';
@@ -22,6 +23,8 @@ type
     _quantita_residua: TRzLabel;
     quantita_caricabile: trzdbnumericedit_go;
     _quantita_caricabile_lbl: TRzLabel;
+    go1_modula_sospeso: trzdbcombobox_go;
+    _go1_modula_sospeso_lbl: TRzLabel;
     procedure v_grigliaEnter(Sender: TObject);
     procedure v_grigliaExit(Sender: TObject);
     procedure invia_missioni_btnClick(Sender: TObject);
@@ -30,11 +33,13 @@ type
     procedure FormCreate(Sender: TObject);
     procedure go1_modula_quantita_da_inviareExit(Sender: TObject);
     procedure v_giacenzeClick(Sender: TObject);
+    procedure go1_modula_sospesoExit(Sender: TObject);
   private
-    forceExit: boolean;
+    ultimo_tasto: word;
   protected
     procedure inviaMissioniModula;
     procedure assegna_testo_query_codice; override;
+    procedure CMDialogKey(var AMessage: TCMDialogKey); message CM_DIALOGKEY;
   public
     { Public declarations }
   end;
@@ -51,9 +56,15 @@ uses
   ZZGO1Modula.Constants, ZZGO1Modula.Missione,
   ZZGO1GESTMODULA,
   ZZModula.Missione, ZZGO1ESPMODULA,
-  ZZKLIB.Constants, ZZKLIB.Utils,
+  KLib.MyString, ZZKLIB.Constants, ZZKLIB.Utils,
   KLib.MySQL.Utils, KLib.MySQL.DriverPort,
   DMARC;
+
+procedure TGO1GESORDAFRN.CMDialogKey(var AMessage: TCMDialogKey);
+begin
+  ultimo_tasto := AMessage.CharCode;
+  inherited;
+end;
 
 procedure TGO1GESORDAFRN.FormCreate(Sender: TObject);
 begin
@@ -93,9 +104,6 @@ const
 
   LEFT_JOIN_ARF =
     'LEFT JOIN arf ON arf.FRN_CODICE = oat.FRN_CODICE AND arf.ART_CODICE = oar.ART_CODICE';
-
-  WHERE_QUANTITA_DA_INVIARE_STMT =
-    'and if(' + FIELD_QUANTITA_INVIATA + ' is null, 0, ' + FIELD_QUANTITA_INVIATA + ') < ' + TABLENAME_OAR + '.' + FIELD_QUANTITA;
 begin
   inherited;
 
@@ -103,14 +111,13 @@ begin
   testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, 'go1_modula_quantita_da_inviare');
   testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, 'modula_scompart.quantita_caricabile');
   testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, FIELD_STMT_QUANTITA_INVIATA);
-  testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, 'arf.CODICE_ARTICOLO_FORNITORE');
+  testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, 'IF (arf.CODICE_ARTICOLO_FORNITORE REGEXP "^[0-9]+", right(concat( "....................", arf.CODICE_ARTICOLO_FORNITORE), 20), arf.CODICE_ARTICOLO_FORNITORE) CODICE_ARTICOLO_FORNITORE');
+  testo_query_codice := getSQLStatementWithFieldInserted(testo_query_codice, 'go1_modula_sospeso');
 
   testo_query_codice := getSQLStatementWithJoinStmtInsertedIfNotExists(testo_query_codice, INNER_JOIN_TUB);
   testo_query_codice := getSQLStatementWithJoinStmtInsertedIfNotExists(testo_query_codice, LEFT_JOIN_MODULA_INVIO);
   testo_query_codice := getSQLStatementWithJoinStmtInsertedIfNotExists(testo_query_codice, LEFT_JOIN_MODULA_SCOMPART);
   testo_query_codice := getSQLStatementWithJoinStmtInsertedIfNotExists(testo_query_codice, LEFT_JOIN_ARF);
-
-  testo_query_codice := getSQLStatementWithWhereStmtInserted(testo_query_codice, WHERE_QUANTITA_DA_INVIARE_STMT);
 end;
 
 procedure TGO1GESORDAFRN.invia_missioni_btnClick(Sender: TObject);
@@ -132,44 +139,6 @@ begin
   end;
 end;
 
-procedure TGO1GESORDAFRN.go1_modula_quantita_da_inviareExit(Sender: TObject);
-begin
-  inherited;
-  if not tasto_esc then
-  begin
-    if (go1_modula_quantita_da_inviare.Value <= query_codice.fieldbyname('quantita_caricabile').AsFloat) and
-      (go1_modula_quantita_da_inviare.Value > 0) then
-    begin
-      if tabella_edit(tabella) then
-      begin
-        tabella.fieldbyname('go1_modula_quantita_da_inviare').AsFloat := go1_modula_quantita_da_inviare.Value;
-        tabella.post;
-
-        refreshQueryKeepingPosition(TQuery(query_codice));
-        query_codice.Next;
-        if not query_codice.Eof then
-        begin
-          FocusControl(go1_modula_quantita_da_inviare);
-        end;
-      end;
-    end
-    else
-    begin
-      if (go1_modula_quantita_da_inviare.Value > 0) then
-      begin
-        normalMessage('Valore inserito superiore alla "quantita caricabile"');
-      end;
-      if tabella_edit(tabella) then
-      begin
-        tabella.fieldbyname('go1_modula_quantita_da_inviare').AsFloat := 0;
-        tabella.post;
-
-        refreshQueryKeepingPosition(TQuery(query_codice));
-      end;
-    end;
-  end;
-end;
-
 procedure TGO1GESORDAFRN.inviaMissioniModula;
 var
   _missione: TMissione;
@@ -187,16 +156,15 @@ begin
 
   query_codiceAfterScroll_TGESGRD_enabled := false;
   //  query_codice.DisableControls;
-
   query_codice.First;
 
   _progressivo_vecchio := 0;
   _esisteMissione := false;
   while not query_codice.Eof do
   begin
-    if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI) and
-      (query_codice.FieldByName('go1_modula_quantita_da_inviare').AsFloat > 0)
-    then
+    if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI)
+      and (query_codice.FieldByName('go1_modula_quantita_da_inviare').AsFloat > 0)
+      and (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
     begin
       _progressivo_corrente := query_codice.FieldByName(FIELD_PROGRESSIVO).AsFloat;
       _nuovaMissione := _progressivo_corrente <> _progressivo_vecchio;
@@ -252,11 +220,72 @@ begin
       sendMissione(_missione);
       updateMissioneQuantitaInviataOAR(_missione.righe);
       _esisteMissione := false;
+      _progressivo_vecchio := 0;
     end;
   end;
 
   query_codiceAfterScroll_TGESGRD_enabled := true;
   //  query_codice.EnableControls;
+end;
+
+procedure TGO1GESORDAFRN.go1_modula_quantita_da_inviareExit(Sender: TObject);
+begin
+  inherited;
+
+  if (ultimo_tasto <> VK_ESCAPE) and (go1_modula_quantita_da_inviare.Value > 0) then
+  begin
+    if (go1_modula_quantita_da_inviare.Value <= query_codice.fieldbyname('quantita_caricabile').AsFloat) then
+    begin
+      if tabella_edit(tabella) then
+      begin
+        tabella.fieldbyname('go1_modula_quantita_da_inviare').AsFloat := go1_modula_quantita_da_inviare.Value;
+        tabella.fieldbyname('go1_modula_sospeso').AsString := 'no';
+        tabella.post;
+
+        refreshQueryKeepingPosition(TQuery(query_codice));
+        if (ultimo_tasto = VK_TAB) or (ultimo_tasto = VK_RETURN) then
+        begin
+          query_codice.Next;
+          if not query_codice.Eof then
+          begin
+            FocusControl(go1_modula_quantita_da_inviare);
+          end;
+        end;
+      end;
+    end
+    else
+    begin
+      //      if (go1_modula_quantita_da_inviare.Value > 0) then
+      //      begin
+      normalMessage('Valore inserito superiore alla "quantita caricabile"');
+      //      end;
+      if tabella_edit(tabella) then
+      begin
+        tabella.fieldbyname('go1_modula_quantita_da_inviare').AsFloat := 0;
+        tabella.post;
+
+        refreshQueryKeepingPosition(TQuery(query_codice));
+      end;
+    end;
+  end;
+end;
+
+procedure TGO1GESORDAFRN.go1_modula_sospesoExit(Sender: TObject);
+var
+  _refresh_query_codice: boolean;
+begin
+  inherited;
+  _refresh_query_codice := go1_modula_sospeso.Value <> tabella.fieldbyname('go1_modula_sospeso').asstring;
+  if _refresh_query_codice then
+  begin
+    if tabella_edit(tabella) then
+    begin
+      tabella.fieldbyname('go1_modula_sospeso').asstring := go1_modula_sospeso.Value;
+      tabella.post;
+
+      refreshQueryKeepingPosition(TQuery(query_codice));
+    end;
+  end;
 end;
 
 procedure TGO1GESORDAFRN.v_giacenzeClick(Sender: TObject);
@@ -272,8 +301,15 @@ begin
   inherited;
   //  if Column.Title.Caption = 'modula' then
   //  begin
-  if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI) and
-    (query_codice.FieldByName('go1_modula_quantita_da_inviare').AsFloat > 0) then
+  if (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'si') then
+  begin
+    v_griglia.canvas.brush.color := clYellow;
+    v_griglia.canvas.font.color := clBlack;
+  end;
+
+  if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI)
+    and (query_codice.FieldByName('go1_modula_quantita_da_inviare').AsFloat > 0)
+    and (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
   begin
     v_griglia.canvas.brush.color := cllime;
     v_griglia.canvas.font.color := clblack;

@@ -262,22 +262,6 @@ inherited GO1GESORDVCL: TGO1GESORDVCL
         end
         item
           Expanded = False
-          FieldName = 'cms_codice'
-          Title.Caption = 'commessa'
-          Title.Color = clYellow
-          Width = 100
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'tipologia'
-          Title.Caption = 'sottocommessa'
-          Title.Color = clYellow
-          Width = 100
-          Visible = True
-        end
-        item
-          Expanded = False
           FieldName = 'quantita_collo'
           Title.Caption = 'quantita collo'
           Title.Color = clYellow
@@ -303,6 +287,22 @@ inherited GO1GESORDVCL: TGO1GESORDVCL
           Title.Caption = 'modula sospeso'
           Title.Color = clYellow
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'cms_codice'
+          Title.Caption = 'commessa'
+          Title.Color = clYellow
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'tipologia'
+          Title.Caption = 'sottocommessa'
+          Title.Color = clYellow
+          Width = 100
+          Visible = True
         end>
     end
   end
@@ -310,6 +310,8 @@ inherited GO1GESORDVCL: TGO1GESORDVCL
     inherited tab_pannello_bottoni_nuovi: TRzPageControl
       FixedDimension = 19
       inherited tab_pannello_bottoni_nuovi_base: TRzTabSheet
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object invia_missioni_btn: TRzRapidFireButton
           Left = 0
           Top = 67

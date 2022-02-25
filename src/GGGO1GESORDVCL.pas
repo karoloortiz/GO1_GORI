@@ -64,25 +64,20 @@ end;
 
 procedure TGO1GESORDVCL.assegna_testo_query_codice;
 const
-  FIELD_QUANTITA_RESIDUA_STMT = '(case when ovr.situazione = "annullato" or ovr.situazione = "revisionato" or ovr.situazione = "consolidato" then 0.0 ' +
+  FIELD_STMT_QUANTITA_RESIDUA = '(case when ovr.situazione = "annullato" or ovr.situazione = "revisionato" or ovr.situazione = "consolidato" then 0.0 ' +
     'else ovr.quantita - ovr.quantita_evasa end) ';
 
   FIELD_STMT_QUANTITA_COLLO =
     TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' ' + FIELD_QUANTITA_COLLO;
-  //  COMPARISON_STMT_QUANTITA_COLLO = TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' > ' + TABLENAME_OVR + '.' + FIELD_QUANTITA + ' OR ' + TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' = 0 ';
-  COMPARISON_STMT_QUANTITA_COLLO = TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' > ' + FIELD_QUANTITA_RESIDUA_STMT + ' OR ' + TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' = 0 ';
+  COMPARISON_STMT_QUANTITA_COLLO = TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' > ' + FIELD_STMT_QUANTITA_RESIDUA + ' OR ' + TABLENAME_ART + '.' + FIELD_QUANTITA_COLLO + ' = 0 ';
 
   FIELD_STMT_MODULA =
     'IF(' + TABLENAME_TUB + '.' + FIELD_MODULA + ' = "' + VALUE_SI + '", IF(' + COMPARISON_STMT_QUANTITA_COLLO + ', "' + VALUE_SI + '", "' + VALUE_NO + '"), "' + VALUE_NO +
     '") ' + FIELD_MODULA;
 
-  //  FIELD_STMT_QUANTITA_DA_INVIARE =
-  //    'IF(' + TABLENAME_TUB + '.' + FIELD_MODULA + ' = "' + VALUE_SI + '", IF(' + COMPARISON_STMT_QUANTITA_COLLO + ', ' +
-  //    TABLENAME_OVR + '.' + FIELD_QUANTITA + ' - if(' + FIELD_QUANTITA_INVIATA + ' is null, 0, ' + FIELD_QUANTITA_INVIATA + ')' +
-  //    ', 0), 0) ' + FIELD_QUANTITA_DA_INVIARE;
   FIELD_STMT_QUANTITA_DA_INVIARE =
     'IF(' + TABLENAME_TUB + '.' + FIELD_MODULA + ' = "' + VALUE_SI + '", IF(' + COMPARISON_STMT_QUANTITA_COLLO + ', ' +
-    FIELD_QUANTITA_RESIDUA_STMT + ' - if(' + FIELD_QUANTITA_INVIATA + ' is null, 0, ' + FIELD_QUANTITA_INVIATA + ')' +
+    FIELD_STMT_QUANTITA_RESIDUA + ' - if(' + FIELD_QUANTITA_INVIATA + ' is null, 0, ' + FIELD_QUANTITA_INVIATA + ')' +
     ', 0), 0) ' + FIELD_QUANTITA_DA_INVIARE;
 
   FIELD_STMT_QUANTITA_INVIATA =
@@ -151,7 +146,7 @@ begin
   while not query_codice.Eof do
   begin
     if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI) and
-      (not(query_codice.fieldbyname('go1_modula_sospeso').asstring = 'si')) then
+      (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
     begin
       _progressivo_corrente := query_codice.FieldByName(FIELD_PROGRESSIVO).AsFloat;
       _nuovaMissione := _progressivo_corrente <> _progressivo_vecchio;
@@ -207,6 +202,7 @@ begin
       sendMissione(_missione);
       updateMissioneQuantitaInviataOVR(_missione.righe);
       _esisteMissione := false;
+      _progressivo_vecchio := 0;
     end;
   end;
 
@@ -217,21 +213,32 @@ end;
 procedure TGO1GESORDVCL.go1_modula_sospesoExit(Sender: TObject);
 var
   _queryStmt: myString;
+  _refresh_query_codice: boolean;
+  _resetQuantita_go1_modula_invio: boolean;
 begin
   inherited;
-  if (go1_modula_sospeso.Value = 'no') and (tabella.fieldbyname('go1_modula_sospeso').asstring = 'si') then
+
+  _refresh_query_codice := go1_modula_sospeso.Value <> tabella.fieldbyname('go1_modula_sospeso').asstring;
+  _resetQuantita_go1_modula_invio := (go1_modula_sospeso.Value = 'no') and (tabella.fieldbyname('go1_modula_sospeso').asstring = 'si');
+  if _refresh_query_codice then
   begin
     if tabella_edit(tabella) then
     begin
       tabella.fieldbyname('go1_modula_sospeso').asstring := go1_modula_sospeso.Value;
       tabella.post;
 
-      _queryStmt := 'DELETE FROM go1_modula_invio WHERE tabella = "OVR" and progressivo = :PROGRESSIVO and riga = :RIGA';
-      _queryStmt.setParamAsFloat(PARAM_PROGRESSIVO, tabella.fieldbyname('progressivo').AsFloat, MYSQL_DECIMAL_SEPARATOR);
-      _queryStmt.setParamAsFloat(PARAM_RIGA, tabella.fieldbyname('riga').AsFloat, MYSQL_DECIMAL_SEPARATOR);
-      KLib.MySQL.Utils.executeQuery(_queryStmt, KLib.MySQL.DriverPort.TConnection(arc.arcdit));
-
-      esegui_query_codice;
+      if _resetQuantita_go1_modula_invio then
+      begin
+        _queryStmt := 'DELETE FROM go1_modula_invio WHERE tabella = "OVR" and progressivo = :PROGRESSIVO and riga = :RIGA';
+        _queryStmt.setParamAsFloat(PARAM_PROGRESSIVO, tabella.fieldbyname('progressivo').AsFloat, MYSQL_DECIMAL_SEPARATOR);
+        _queryStmt.setParamAsFloat(PARAM_RIGA, tabella.fieldbyname('riga').AsFloat, MYSQL_DECIMAL_SEPARATOR);
+        KLib.MySQL.Utils.executeQuery(_queryStmt, KLib.MySQL.DriverPort.TConnection(arc.arcdit));
+        esegui_query_codice;
+      end
+      else
+      begin
+        refreshQueryKeepingPosition(TQuery(query_codice));
+      end;
     end;
   end;
 end;
@@ -242,11 +249,17 @@ begin
   inherited;
   //  if Column.Title.Caption = 'modula' then
   //  begin
-  if (query_codice.fieldbyname(FIELD_MODULA).asstring = VALUE_SI) and
-    (not(query_codice.fieldbyname('go1_modula_sospeso').asstring = 'si')) then
+  if (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'si') then
   begin
-    v_griglia.canvas.brush.color := cllime;
-    v_griglia.canvas.font.color := clblack;
+    v_griglia.canvas.brush.color := clYellow;
+    v_griglia.canvas.font.color := clBlack;
+  end;
+
+  if (query_codice.fieldbyname(FIELD_MODULA).asstring = VALUE_SI)
+    and (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
+  begin
+    v_griglia.canvas.brush.color := clLime;
+    v_griglia.canvas.font.color := clBlack;
   end;
   //  end;
 

@@ -278,6 +278,10 @@ procedure TMissione.clear;
 const
   EMPTY: TMissione = ();
 begin
+  if Assigned(righe) then
+  begin
+    FreeAndNil(righe);
+  end;
   Self := EMPTY;
 end;
 

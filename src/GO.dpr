@@ -1683,6 +1683,8 @@ uses
   ZZFIDO_FRN in 'GO-STANDARD\ZZFIDO_FRN.pas',
   GGIMPPAR in 'GO-STANDARD\GGIMPPAR.pas' {IMPPAR} ,
   GGIMPGEN in 'GO-STANDARD\GGIMPGEN.pas' {IMPGEN} ,
+  GGCREATEST in 'GO-STANDARD\GGCREATEST.pas' {CREATEST} ,
+  GGFATPDFFE in 'GO-STANDARD\GGFATPDFFE.pas' {FATPDFFE} ,
   KLib.Constants in 'KLib\Delphi_Utils_Library\KLib.Constants.pas',
   KLib.Graphics in 'KLib\Delphi_Utils_Library\KLib.Graphics.pas',
   KLib.Math in 'KLib\Delphi_Utils_Library\KLib.Math.pas',

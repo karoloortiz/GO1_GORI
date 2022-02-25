@@ -73,4 +73,4 @@ COLLATE='utf8_bin'
 ENGINE=INNODB
 ;
 
-#ALTER TABLE go1espmodula ADD COLUMN data_ultimo_aggiornamento_giacenze DATETIME NULL DEFAULT NULL;
+ALTER TABLE oar add COLUMN go1_modula_sospeso ENUM('no','si') DEFAULT 'no';

@@ -6,6 +6,8 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
     inherited tab_control: TRzPageControl
       FixedDimension = 18
       inherited tab_pagina1: TRzTabSheet
+        ExplicitLeft = 1
+        ExplicitTop = 19
         object _quantita_da_inviare_lbl: TRzLabel [2]
           Left = 385
           Top = 6
@@ -42,6 +44,21 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
           Width = 86
           Height = 13
           Caption = 'quantita caricabile'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Microsoft Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ShowAccelChar = False
+          Transparent = True
+        end
+        object _go1_modula_sospeso_lbl: TRzLabel [5]
+          Left = 494
+          Top = 6
+          Width = 76
+          Height = 13
+          Caption = 'modula sospeso'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
@@ -100,7 +117,6 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
           ReadOnlyColor = clBtnFace
           ReadOnlyColorOnFocus = True
           TabOrder = 3
-          OnExit = go1_modula_quantita_da_inviareExit
           AllowBlank = False
           IntegersOnly = False
           DisplayFormat = ',0.00;-,0.00;#'
@@ -128,11 +144,36 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
           ReadOnlyColor = clBtnFace
           ReadOnlyColorOnFocus = True
           TabOrder = 4
-          OnExit = go1_modula_quantita_da_inviareExit
           AllowBlank = False
           IntegersOnly = False
           DisplayFormat = ',0.00;-,0.00;#'
           decimalplaces = 4
+        end
+        object go1_modula_sospeso: trzdbcombobox_go
+          Left = 492
+          Top = 20
+          Width = 81
+          Height = 21
+          DataField = 'go1_modula_sospeso'
+          DataSource = query_codice_ds
+          Style = csDropDownList
+          FlatButtons = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Microsoft Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ReadOnlyColor = clBtnFace
+          ReadOnlyColorOnFocus = True
+          TabOrder = 5
+          OnExit = go1_modula_sospesoExit
+          Items.Strings = (
+            'si'
+            'no')
+          Values.Strings = (
+            'si'
+            'no')
         end
       end
     end
@@ -188,6 +229,7 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
           FieldName = 'codice_articolo_fornitore'
           Title.Caption = 'articolo fornitore'
           Title.Color = clYellow
+          Width = 130
           Visible = True
         end
         item
@@ -278,6 +320,13 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
         end
         item
           Expanded = False
+          FieldName = 'go1_modula_sospeso'
+          Title.Caption = 'modula sospeso'
+          Title.Color = clYellow
+          Visible = True
+        end
+        item
+          Expanded = False
           FieldName = 'indirizzo'
           Title.Caption = 'filiale'
           Title.Color = clYellow
@@ -313,6 +362,8 @@ inherited GO1GESORDAFRN: TGO1GESORDAFRN
     inherited tab_pannello_bottoni_nuovi: TRzPageControl
       FixedDimension = 19
       inherited tab_pannello_bottoni_nuovi_base: TRzTabSheet
+        ExplicitLeft = 1
+        ExplicitTop = 23
         object invia_missioni_btn: TRzRapidFireButton
           Left = 0
           Top = 67
