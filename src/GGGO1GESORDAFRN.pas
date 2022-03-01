@@ -129,11 +129,7 @@ begin
 
   if confirmMessage(CONFIRM_MSG) then
   begin
-    try
-      inviaMissioniModula;
-    except
-      on E: Exception do
-    end;
+    inviaMissioniModula;
     esegui_query_codice;
     successfulMessage;
   end;

@@ -310,8 +310,6 @@ inherited GO1GESORDVCL: TGO1GESORDVCL
     inherited tab_pannello_bottoni_nuovi: TRzPageControl
       FixedDimension = 19
       inherited tab_pannello_bottoni_nuovi_base: TRzTabSheet
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object invia_missioni_btn: TRzRapidFireButton
           Left = 0
           Top = 67

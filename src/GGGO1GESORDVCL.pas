@@ -108,14 +108,9 @@ const
     'Inviare le missioni delle righe visualizzate a Modula?';
 begin
   inherited;
-
   if confirmMessage(CONFIRM_MSG) then
   begin
-    try
-      inviaMissioniModula;
-    except
-      on E: Exception do
-    end;
+    inviaMissioniModula;
     esegui_query_codice;
     successfulMessage;
   end;
@@ -145,12 +140,11 @@ begin
   _esisteMissione := false;
   while not query_codice.Eof do
   begin
-    if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI) and
-      (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
+    if (query_codice.FieldByName(FIELD_MODULA).AsString = VALUE_SI)
+      and (query_codice.fieldbyname('go1_modula_sospeso').asstring = 'no') then
     begin
       _progressivo_corrente := query_codice.FieldByName(FIELD_PROGRESSIVO).AsFloat;
       _nuovaMissione := _progressivo_corrente <> _progressivo_vecchio;
-
       if _nuovaMissione then
       begin
         _descrizioneMissione := 'ov n ' + query_codice.FieldByName(FIELD_NUMERO_DOCUMENTO).AsString + ' ' + v_cli_descrizione1.Text;
@@ -176,7 +170,6 @@ begin
         riga := query_codice.FieldByName(FIELD_RIGA).AsFloat;
       end;
       _missione.righe.Add(_rigaMissione);
-
       _progressivo_vecchio := query_codice.FieldByName(FIELD_PROGRESSIVO).AsFloat;
 
       _esisteMissione := true;
